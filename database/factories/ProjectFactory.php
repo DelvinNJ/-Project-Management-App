@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,14 +17,15 @@ class ProjectFactory extends Factory
      */
     public function definition(): array
     {
+        $users = User::pluck('id')->toArray();
         return [
             "name" => fake()->sentence(),
             "description" => fake()->realText(),
             "due_date" => fake()->dateTimeBetween('now', '+1 years'),
             "status" => fake()->randomElement(['pending', 'in_progress']),
             "image_path" => fake()->imageUrl('600', '400'),
-            "created_by" => 1,
-            "updated_by" => 1
+            "created_by" => fake()->randomElement($users),
+            "updated_by" => fake()->randomElement($users),
         ];
     }
 }
