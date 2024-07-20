@@ -19,7 +19,6 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        // dump(request()->query());
         $projects = QueryBuilder::for(Project::class)
             ->allowedFilters([
                 'name',

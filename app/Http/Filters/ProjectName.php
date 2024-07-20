@@ -6,14 +6,14 @@ use \Spatie\QueryBuilder\Sorts\Sort;
 use Illuminate\Database\Eloquent\Builder;
 
 
-class CreatedByNameSort  implements Sort
+class ProjectName  implements Sort
 {
 
     public function __invoke(Builder $query, bool $descending, string $property)
     {
         $table = $query->getModel()->getTable();
         $direction = $descending ? 'desc' : 'asc';
-        $query->join('users', "{$table}.created_by", '=', 'users.id')
-            ->orderBy('users.name', $direction);
+        $query->join('projects', "{$table}.project_id", '=', 'projects.id')
+            ->orderBy('projects.name', $direction);
     }
 }

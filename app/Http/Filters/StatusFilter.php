@@ -11,6 +11,7 @@ class StatusFilter  implements Filter
 
     public function __invoke(Builder $query, $value, string $property)
     {
-        $query->where($property, 'LIKE', '%' . $value . '%');
+        $table = $query->getModel()->getTable();
+        $query->where("{$table}.{$property}", 'LIKE', '%' . $value . '%');
     }
 }
