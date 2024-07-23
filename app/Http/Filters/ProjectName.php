@@ -14,6 +14,7 @@ class ProjectName  implements Sort
         $table = $query->getModel()->getTable();
         $direction = $descending ? 'desc' : 'asc';
         $query->join('projects', "{$table}.project_id", '=', 'projects.id')
+            ->select("{$table}.*")
             ->orderBy('projects.name', $direction);
     }
 }

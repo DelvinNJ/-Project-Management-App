@@ -14,6 +14,7 @@ class CreatedByNameSort  implements Sort
         $table = $query->getModel()->getTable();
         $direction = $descending ? 'desc' : 'asc';
         $query->join('users', "{$table}.created_by", '=', 'users.id')
+            ->select("{$table}.*")
             ->orderBy('users.name', $direction);
     }
 }

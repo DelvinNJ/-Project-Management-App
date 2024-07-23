@@ -38,7 +38,7 @@ class TaskController extends Controller
             ])
             ->with('project')
             ->with('createdBy')
-            ->paginate(10)->onEachSide(1)->withQueryString();
+            ->paginate(10)->onEachSide(2)->withQueryString();
 
         return Inertia('Task/Index', [
             'tasks' => TaskResource::collection($tasks),
@@ -91,6 +91,9 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        //
+        $task->delete();
+        return redirect()
+            ->back()
+            ->with('success', 'Task was deleted');
     }
 }

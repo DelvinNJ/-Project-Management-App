@@ -8,10 +8,12 @@ import TableHeading from "@/Components/TableHeading";
 import TextInput from "@/Components/TextInput";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
+import { useEffect } from "react";
 import { FaFilterCircleXmark } from "react-icons/fa6";
+import { Slide, ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-export default function Index({ auth, projects, queryParams = null }) {
-
+export default function Index({ auth, flash, projects, queryParams = null }) {
     // Filtering
     queryParams = queryParams || {};
     queryParams.filter = queryParams.filter || {};
@@ -20,6 +22,8 @@ export default function Index({ auth, projects, queryParams = null }) {
     const sortOptions = queryParams.sort ? queryParams.sort.split(',') : [];
 
     const searchFieldChanged = (name, value) => {
+        if (queryParams.filter.name === value || (queryParams.filter.name === undefined && value === ''))
+            return;
         if (value)
             queryParams.filter[name] = value;
         else
@@ -46,6 +50,29 @@ export default function Index({ auth, projects, queryParams = null }) {
         router.get(route('project.index'), queryParams);
     }
 
+    useEffect(() => {
+        if (flash.message.success) {
+            toast.success(flash.message.success, {
+                transition: Slide,
+                autoClose: 2000,
+            });
+        }
+        if (flash.message.error) {
+            toast.error(flash.message.error, {
+                transition: Slide,
+                autoClose: 2000,
+            });
+        }
+    }, [flash])
+    // Delete project 
+    const deleteProject = (id) => {
+        if (!window.confirm('Are you sure')) {
+            return;
+        }
+        router.delete(route('project.destroy', id), {
+            preserveScroll: true
+        });
+    }
     const clearFilter = () => {
         queryParams.filter = {};
         queryParams.sort = '';
@@ -55,9 +82,21 @@ export default function Index({ auth, projects, queryParams = null }) {
     return (
         <Authenticated
             user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Dashboard</h2>}
+            header={
+                <div className="flex justify-between">
+                    <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Project</h2>
+                    <Link
+                        href={route('project.create')}
+                        className="inline-flex items-center px-4 py-2 bg-emerald-500 dark:bg-emerald-500 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
+                        Add project
+                    </Link>
+
+                </div>
+            }
         >
             <Head title="Project" />
+
+            <ToastContainer />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -98,9 +137,9 @@ export default function Index({ auth, projects, queryParams = null }) {
                                             <th scope="col" className="px-6 py-3 text-nowrap">
                                                 Status
                                             </th>
-                                            <th scope="col" className="px-6 py-3 text-nowrap">
+                                            {/* <th scope="col" className="px-6 py-3 text-nowrap">
                                                 Description
-                                            </th>
+                                            </th> */}
                                             <TableHeading
                                                 sortChange={sortChange}
                                                 filed_name='due_date'
@@ -144,9 +183,9 @@ export default function Index({ auth, projects, queryParams = null }) {
                                                     <option value="completed">Completed</option>
                                                 </SelectInput>
                                             </th>
-                                            <th scope="col" className="px-6 py-3 text-nowrap">
+                                            {/* <th scope="col" className="px-6 py-3 text-nowrap">
 
-                                            </th>
+                                            </th> */}
                                             <th scope="col" className="px-6 py-3 text-nowrap">
 
                                             </th>
@@ -173,26 +212,28 @@ export default function Index({ auth, projects, queryParams = null }) {
                                                 <td className="px-6 py-4">
                                                     <img src={project.imagePath} alt="" width="60" />
                                                 </td>
-                                                <td className="px-6 py-4">
-                                                    {project.name}
+                                                <td className="px-6 py-4 text-white">
+                                                    <Link className="hover:underline" href={route('project.show', project.id)}>
+                                                        {project.name}
+                                                    </Link>
                                                 </td>
                                                 <td className="px-6 py-4 text-nowrap ">
-                                                    <span className={"px-2 py-1 rounded text-white " + PROJECT_STATUS_CLASS_MAP[project.status]}>
+                                                    <span className={"block w-24 text-center px-2 py-1 rounded text-white " + PROJECT_STATUS_CLASS_MAP[project.status]}>
                                                         {PROJECT_STATUS_TEXT_MAP[project.status]}
                                                     </span>
                                                 </td>
-                                                <td className="px-6 py-4">
+                                                {/* <td className="px-6 py-4">
                                                     {project.description}
-                                                </td>
+                                                </td> */}
                                                 <td className="px-6 py-4 text-nowrap">
                                                     {project.dueDate}
                                                 </td>
                                                 <td className="px-6 py-4">
                                                     {project.createdBy.name}
                                                 </td>
-                                                <td className="px-6 py-4 text-center">
+                                                <td className="px-6 py-4 text-center text-nowrap">
                                                     <Link className="font-medium text-blue-600 dark:text-blue-500 hover:underline mx-1">Edit</Link>
-                                                    <Link className="font-medium text-red-600 dark:text-red-500 hover:underline mx-1">Delete</Link>
+                                                    <button onClick={e => deleteProject(project.id)} className="font-medium text-red-600 dark:text-red-500 hover:underline mx-1">Delete</button>
                                                 </td>
                                             </tr>
                                         ))}

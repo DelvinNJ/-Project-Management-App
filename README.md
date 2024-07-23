@@ -50,6 +50,11 @@ Then, navigate to the following URL in your web browser:
 http://127.0.0.1:8000
 ```
 
+##### Reference
+- https://www.youtube.com/watch?v=VrQRa-afCAk
+- https://kinsta.com/blog/laravel-breeze/
+- https://inertiajs.com/
+- https://www.youtube.com/watch?v=0aByJLulF50 (Toast message)
 
 Contact
 If you have any questions or feedback, feel free to reach out:
